@@ -182,6 +182,35 @@ displayMovements(account1.movements);
 // // Join method concat the array elements into one string usig separator you determin it
 // console.log(letters.join('-> '));
 
+// ---------      MAP          --------        FILETER      ---------       REDUCE       ---------
+// those are power full arrays tools
+// map() method is like forEach() it loops over array and give is a brand new array, this array contain each position the result of applying a callback function to the original array elements
+// lets try it with our movements array. lets convert them from euros to us dollars by multiby by euro convertion rate
+const euroToUsd = 1.1;
+
+const movementsUsd = movements.map(function (mov) {
+  return mov * euroToUsd;
+});
+console.log(movements);
+console.log(movementsUsd);
+
+const movementsUsdArrow = movements.map(mov => mov * euroToUsd);
+console.log(movementsUsdArrow);
+
+// Use for of to do this
+const movementsUsdFor = [];
+for (const mov of movements) movementsUsdFor.push(mov * euroToUsd);
+console.log(movementsUsdFor);
+
+// the map method has access to exact same 3 parameteres, value, index, and the whole array
+const movementsDescription = movements.map(
+  (mov, key) =>
+    `Movement ${key + 1}: You ${mov > 0 ? 'Deposited' : 'Withdrew'} ${Math.abs(
+      mov
+    )}`
+);
+console.log(movementsDescription);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  CHALLENGES
 //                                 Challenge #1

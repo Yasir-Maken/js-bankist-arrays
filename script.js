@@ -72,31 +72,71 @@ const currencies = new Map([
 ]);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+////////////////////////////////////////////////////////////////////
+//                          THE LOGIC
+// This funcion displays the all user movements
+const displayMovements = function (movements) {
+  containerMovements.innerHTML = ''; // this empty the movement from elements that we have set to represent our desing
 
-/////////////////////////////////////////////////////////////////
+  movements.forEach(function (mov, i) {
+    const type = mov > 0 ? 'deposit' : 'withdrawal'; // check wether the movement is deposit or withdrawal according to the movement value
+    // the html that represent the movment on our ui, and insert it to its right place
+    const html = ` 
+        <div class="movements__row">
+          <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
+          <div class="movements__value">${mov}</div>
+        </div>
+      `;
+    containerMovements.insertAdjacentHTML('afterbegin', html); // the method that insert the above text to our html document as a node
+  });
+};
+displayMovements(account1.movements);
+////////////////////////////////////////////////////////////////////
+
+/////////////////////////   FOREACH WITH MAPS  ///////////////////////////////
+// Here it looks similar to array, but map have array of arrays
+// the callback function should have params the value, the key and the entire map
+// const userEntry = 'GBP';
+// currencies.forEach(function (value, key, mp) {
+//   console.log(`${key}: ${value}`);
+// });
+
+// // SETS: Let's try this for sets.
+// const currenciesUnique = new Set(['USD', 'GBP', 'USD', 'EUR', 'EUR']);
+// console.log(currenciesUnique);
+// // and what we se here that is the key is the same as the value.
+// // that because sets don't have indexes or keys.
+
+// currenciesUnique.forEach(function (value, _, mp) {
+//   console.log(`${_}: ${value}`);
+// });
+
+/////////////////////////   FOREACH WITH ARRAYS  ///////////////////////////////
 
 // for (const movement of movements)
-for (const [i, movement] of movements.entries()) {
-  if (movement > 0) {
-    console.log(`Movement ${i + 1}: You Deposited ${movement}`);
-  } else {
-    console.log(`Movement ${i + 1}: You Withdrew ${Math.abs(movement)}`); // abs() is Math method that remove the negative sign(-)minus form the number
-  }
-}
-console.log(''.padEnd(30, '*'));
-//FOREACH
-// forEach() Method: it is a higer ordered level function so it required a callback function. In order to tell it what to do for each element
-// movement argument we passed it to forEach, so each time the callback function is called it recieve the current element as movement
+// for (const [i, movement] of movements.entries()) {
+//   if (movement > 0) {
+//     console.log(`Movement ${i + 1}: You Deposited ${movement}`);
+//   } else {
+//     console.log(`Movement ${i + 1}: You Withdrew ${Math.abs(movement)}`); // abs() is Math method that remove the negative sign(-)minus form the number
+//   }
+// }
+// console.log(''.padEnd(30, '*'));
+// //FOREACH
+// // forEach() Method: it is a higer ordered level function so it required a callback function. In order to tell it what to do for each element
+// // movement argument we passed it to forEach, so each time the callback function is called it recieve the current element as movement
 
-// Also forEach is alot easier to access the index, and as it callback the function
-// it passes in the current element of the array, and also the current element and the entir array
-movements.forEach(function (mov, key, arr) {
-  if (mov > 0) {
-    console.log(`Movement ${key + 1}: You Deposited ${mov}`);
-  } else {
-    console.log(`Movement ${key + 1}: You Withdrew ${Math.abs(mov)}`); // abs() is Math method that remove the negative sign(-)minus form the number
-  }
-});
+// // Also forEach is alot easier to access the index, and as it callback the function
+// // it passes in the current element of the array, and also the current element and the entir array
+// movements.forEach(function (mov, key, arr) {
+//   if (mov > 0) {
+//     console.log(`Movement ${key + 1}: You Deposited ${mov}`);
+//   } else {
+//     console.log(`Movement ${key + 1}: You Withdrew ${Math.abs(mov)}`); // abs() is Math method that remove the negative sign(-)minus form the number
+//   }
+// });
 
 // this is how it works. It will call the function in each iteration to a certin element
 // 0: function(200)
@@ -104,6 +144,8 @@ movements.forEach(function (mov, key, arr) {
 // 2: function(-400)
 // ...
 // and so on untill the end of the array
+
+/////////////////////////   ARRAY TOOLS  ///////////////////////////////
 
 // Lets Navigate Arrays Methods.
 // let arr = ['a', 'b', 'c', 'd', 'e', 'f'];
@@ -139,3 +181,27 @@ movements.forEach(function (mov, key, arr) {
 // // JOIN
 // // Join method concat the array elements into one string usig separator you determin it
 // console.log(letters.join('-> '));
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                  CHALLENGES
+//                                 Challenge #1
+// julie and kate resarch about dogs
+// const checkDogs = function (dogsJulia, dogsKate) {
+//   // drope the first and last dogs from julia array because they are actually cats
+//   const newDogsJulia = dogsJulia.slice(); // create new array to not mess with the original argument hahahahah
+//   newDogsJulia.splice(0, 1); // this will drop the first element of the array
+//   newDogsJulia.splice(-2); // this will drop the last two element of the array
+//   console.log(newDogsJulia);
+//   const jouliaKateDogs = newDogsJulia.concat(dogsKate); // use concat() method to create array with both julia and kate dogs
+
+//   jouliaKateDogs.forEach(function (age, i) {
+//     let dogAge = age >= 3 ? 'an Adult' : ' still a Puppy';
+//     console.log(`Dog number ${i + 1} is ${dogAge} and is ${age} years old`);
+//   });
+// };
+
+// checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
+// checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+
+// Data 1: Julia's data [3, 5, 2, 12, 7], Kate's data [4, 1, 15, 8, 3]
+// §Data 2: Julia's data [9, 16, 6, 8, 3], Kate's data [10, 5, 6, 1, 4]

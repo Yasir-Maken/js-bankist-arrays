@@ -93,6 +93,26 @@ const displayMovements = function (movements) {
   });
 };
 displayMovements(account1.movements);
+
+// Compute user name: taking the first letter of each word & combine them together in lower case
+// For Example: 'Yasir Maken' user name should => ym.
+// const user1 = 'Yasir Maken Alnor'; // for testing createUserNames() function
+
+// take each account in accounts array and mutate it by adding the user name into that account object
+const createUserNames = function (accs) {
+  // take the name transform it into lowr case, split it into seprate names into array loop each name string within the array and get the first name into array and then join this array into string
+  accs.forEach(function (acc) {
+    acc.userName = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+createUserNames(accounts);
+console.log(accounts);
+
 ////////////////////////////////////////////////////////////////////
 
 /////////////////////////   FOREACH WITH MAPS  ///////////////////////////////
@@ -184,32 +204,35 @@ displayMovements(account1.movements);
 
 // ---------      MAP          --------        FILETER      ---------       REDUCE       ---------
 // those are power full arrays tools
+// MAP
 // map() method is like forEach() it loops over array and give is a brand new array, this array contain each position the result of applying a callback function to the original array elements
 // lets try it with our movements array. lets convert them from euros to us dollars by multiby by euro convertion rate
-const euroToUsd = 1.1;
+// const euroToUsd = 1.1;
 
-const movementsUsd = movements.map(function (mov) {
-  return mov * euroToUsd;
-});
-console.log(movements);
-console.log(movementsUsd);
+// const movementsUsd = movements.map(function (mov) {
+//   return mov * euroToUsd;
+// });
+// console.log(movements);
+// console.log(movementsUsd);
 
-const movementsUsdArrow = movements.map(mov => mov * euroToUsd);
-console.log(movementsUsdArrow);
+// const movementsUsdArrow = movements.map(mov => mov * euroToUsd);
+// console.log(movementsUsdArrow);
 
-// Use for of to do this
-const movementsUsdFor = [];
-for (const mov of movements) movementsUsdFor.push(mov * euroToUsd);
-console.log(movementsUsdFor);
+// // Use for of to do this
+// const movementsUsdFor = [];
+// for (const mov of movements) movementsUsdFor.push(mov * euroToUsd);
+// console.log(movementsUsdFor);
 
-// the map method has access to exact same 3 parameteres, value, index, and the whole array
-const movementsDescription = movements.map(
-  (mov, key) =>
-    `Movement ${key + 1}: You ${mov > 0 ? 'Deposited' : 'Withdrew'} ${Math.abs(
-      mov
-    )}`
-);
-console.log(movementsDescription);
+// // the map method has access to exact same 3 parameteres, value, index, and the whole array
+// const movementsDescription = movements.map(
+//   (mov, key) =>
+//     `Movement ${key + 1}: You ${mov > 0 ? 'Deposited' : 'Withdrew'} ${Math.abs(
+//       mov
+//     )}`
+// );
+// console.log(movementsDescription);
+
+// FILTER
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  CHALLENGES

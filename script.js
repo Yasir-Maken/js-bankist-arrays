@@ -75,10 +75,13 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 ////////////////////////////////////////////////////////////////////
 //                          THE LOGIC
 // This funcion displays the all user movements
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = ''; // this empty the movement from elements that we have set to represent our desing
 
-  movements.forEach(function (mov, i) {
+  // Sort our movemnets if the sort param is true
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal'; // check wether the movement is deposit or withdrawal according to the movement value
     // the html that represent the movment on our ui, and insert it to its right place
     const html = ` 
@@ -160,7 +163,6 @@ const updateUI = function () {
 };
 
 // Event handler:
-
 // Perform Login Logic
 let currentAccount;
 btnLogin.addEventListener('click', function (e) {
@@ -195,8 +197,8 @@ btnLogin.addEventListener('click', function (e) {
 // Perform Transfere Logic
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  // First we should check if the transfer input are valid
 
+  // First we should check if the transfer input are valid
   const amount = Number(inputTransferAmount.value); // amount to transfere
   const recieverAccount = accounts.find(
     acc => acc.userName === inputTransferTo.value
@@ -217,6 +219,26 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Then update the UI now to see the new things that happens
     updateUI();
+  }
+});
+
+// Perfore Request Loan Logic
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+  // our fictional bank set a rul to accept loan request the acount should have a deposit equal to or greater than 10% of the deposit amount
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= mov * 0.1)) {
+    // And this is a good scenario for some() method. if this true Add Movement. and update the UI
+
+    // Add Movement
+    currentAccount.movements.push(amount);
+
+    // Update the UI
+    updateUI();
+
+    // Clear the Loan Input
+    inputLoanAmount.value = '';
   }
 });
 
@@ -241,6 +263,15 @@ btnClose.addEventListener('click', function (e) {
     containerApp.style.opacity = 0;
   }
   inputCloseUsername.value = inputClosePin.value = '';
+});
+
+// Perform Sort Movements Logic
+let sorted = false; // this to look at the status or sort ture or false so we can handle it.
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
 
 ////////////////////////////////////////////////////////////////////
@@ -443,6 +474,9 @@ btnClose.addEventListener('click', function (e) {
 // console.log(account);
 
 // ----------------------------       SOME       -------------------------------    EVERY      ------------------------
+
+// Some() ------------->>>
+
 // Some() is like a include() method so it return true or false, but some() search for a pattern or a condition, while include search for value == to value
 // console.log(movements);
 // // EQUALITY
@@ -451,6 +485,91 @@ btnClose.addEventListener('click', function (e) {
 // // CONDITION
 // console.log(movements.some(mov => mov === -130)); // this gives same include() result. so it is better to use iclude when you look for equality
 // console.log(movements.some(mov => mov > 0)); // this will return true if there is elements bigger than 0 (+). false if not
+
+// Every() -------------->>>
+
+// Every() is pretty similar ot Some method, the core defferent is that every only return true if all the array elements satisfy the condition
+// In other word if all the element passes the test the callback function will retrun true.
+// console.log(movements.every(mov => mov > 0));
+// console.log(account4.movements.every(mov => mov > 0)); // Thats so enjoyable. make me very excited
+
+// // Lets separate the callback and call it into diferent methods
+// const deposit = mov => mov > 0;
+// console.log(movements.some(deposit)); // true
+// console.log(movements.every(deposit)); // false
+// console.log(movements.filter(deposit)); // []
+
+// ------------           FLAT            --------------            FLAT MAP              -------------
+
+// Flat() ------------>>>
+
+// it is takes nested arrays and flatend them into a single array [[10, 20], [30, 40]] => [10, 20, 30, 40]
+// const arr = [[10, 20], [30, 40], 50, 60];
+// console.log(arr);
+// console.log(arr.flat());
+
+// // the flat() method go one level deep into nested arrays. if we have array inside inside it will return first array
+// const arrDeep = [[10, 20, [30, 40]], 50, [60, [70, 80]]];
+// console.log(arrDeep);
+// console.log(arrDeep.flat()); // to solve that we use depth argument to the flat method which determin the level of the flat
+// console.log(arrDeep.flat(2)); // so it will go deeper into 2 levels to extract elements from nested arrays
+
+// Lets try this with more real scenario. lets calculate the overall balance of all the accounts within the bank
+// const accountMovements = accounts.map(acc => acc.movements); // this return array with arrays each arry holds movements of an account
+// console.log(accountMovements);
+// const allMovements = accountMovements.flat(); // this retun single array whith all movements wihtin tha bank
+// console.log(allMovements);
+// const overallBalance1 = allMovements.reduce((acc, mov) => acc + mov, 0); // so now it easier to get the total movements with reduce() method
+// console.log(overallBalance1);
+
+// We can be artist on this by use method Chaining
+// const overallBalance = accounts
+//   .map(acc => acc.movements)
+//   .flat()
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(overallBalance);
+
+// Flatmap() ----------->>>
+
+// It's essentially combines between map(), and flat() mehtods: it do map() simply if resulted array in nested it will flatened it directly
+// const overallBalance2 = accounts
+//   // Note: about flatMap() it always go one level and we can't change it OK
+//   .flatMap(acc => acc.movements) // happen here. map with our logic and flatened the array directly
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(overallBalance2);
+
+// ----------------------------------------            SORTING             -----------------------------------
+
+// The much discussed topic in computer science ....... there is a dozen of sorting algorithm. lets navigate Js built in sorting one
+
+// Sort()  --------------->>>  STRINGS
+// const owners = ['Yasir', 'Mujahed', 'Idrees', 'Ahmed'];
+// console.log(owners.sort()); // here we got our array nicely sorted. but this accually mutate the original array. we have to be carefull with it
+
+// // Sort()  --------------->>>  NUMBERS
+// // To cosider that it works well just with strings. yes as you read and try
+// console.log(movements);
+// console.log(movements.sort()); // sorted in a wierd way.
+// To fix that we should use it callback function. it has 2 arguments, first and next value in oreder.
+//         ASCENDING ORDER
+// return > 0, a - b. (1) keep order
+// return < 0, b - a. (-1) switch order
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+// movements.sort((a, b) => a - b); // simplify it
+// console.log(movements);
+
+// //         DEASCENDING ORDER
+// // movements.sort((a, b) => {
+// //   if (a > b) return -1;
+// //   if (a < b) return 1;
+// // });
+// movements.sort((a, b) => b - a);
+// console.log(movements);
+
+// NOTE: that this won't work if we have mixed array with strings and numbers
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  CHALLENGES

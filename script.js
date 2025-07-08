@@ -571,6 +571,60 @@ btnSort.addEventListener('click', function (e) {
 
 // NOTE: that this won't work if we have mixed array with strings and numbers
 
+// -----------------------------            FILLING & CREATING            ------------------------------
+
+// Filling() ------------>>>
+
+// it is to fill array with specific value or elements.
+// Normal way to create array
+// const arr = [1, 2, 3, 4, 5, 6, 7];
+// console.log(arr);
+// const arr1 = new Array(8, 9, 10, 11, 12, 13, 14);
+// console.log(arr1);
+
+// // Note: Array constructor with one number returns and empty array with length = that number. & we can't use map() method on it
+// const arr2 = new Array(7);
+// console.log(arr2);
+// arr2.map(() => 5); // nothing will change, see you should be carefull when using this constructor
+// console.log(arr2);
+// // Fill(). as its name it fill tha array with values by start index, & end index
+// // arr2.fill(1);
+// // console.log(arr2); // as you see it iterate throgh the array using its index and fill it with 1 s
+// // arr2.fill(1, 2); // here will start filling from index 2
+// // console.log(arr2);
+// arr2.fill(1, 2, 5); // it fill with 1 s from 2 to 5 indexes
+// console.log(arr2);
+// // we can mutate existing array with fill also
+// arr.fill(23, 2, 5);
+// console.log(arr);
+
+// // Form() ---------------->>>
+
+// // form() constructor is use. let you determin the length of your array, and accept call back function like map() method
+// const arrForm = Array.from({ length: 7 }, () => 1); // this will create an array its length is 7 and fill it with 1 s
+// console.log(arrForm);
+
+// // use form() method argument the current value & its index
+// const arrZ = Array.from({ length: 7 }, (_, i) => i + 1); // _Under_Score (_) call through away symbol, argument we won't use it but we have to define it
+// console.log(arrZ);
+
+// // this will be usefull when we us querySellectorAll('.class') it will return a nodeList similar to array but we can't use map() & reduce() methods on it
+// // So we have to use Array.from() to perform what we want and mutate it like we want
+
+// // lets perform it when clicking on balance label. avoiding the reload for which we loose the movements
+// labelBalance.addEventListener('click', function () {
+//   // lets create collects the movements from the user interface
+//   const movementsUI = Array.from(
+//     document.querySelectorAll('.movements__value'),
+//     el => Number(el.textContent.replace('€', ''))
+//   );
+//   console.log(movementsUI);
+
+//   // another way to create array from querySellectorAll()
+//   const movementsUI2 = [...document.querySelectorAll('.movements__value')]; // ass you gessed we use spread operator
+//   console.log(movementsUI2);
+// });
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  CHALLENGES
 //                                 Challenge #1
@@ -661,3 +715,155 @@ btnSort.addEventListener('click', function (e) {
 // const ave1 = [5, 2, 4, 1, 15, 8, 3],
 //   ave2 = [16, 6, 10, 5, 6, 1, 4];
 // console.log(calcAverageHumanAge(ave1), calcAverageHumanAge(ave2));
+
+//                                 Challenge #4
+
+// Keep continou with Julia & Kate Research -------------------->>>
+
+// Julia and Kate are still studying dogs, and this time they are studying if dogs are
+// eating too much or too little.
+// Eating too much means the dog's current food portion is larger than the
+// recommended portion, and eating too little is the opposite.
+// Eating an okay amount means the dog's current food portion is within a range 10%
+// above and 10% below the recommended portion (see hint).
+// Your tasks:
+// 1. Loop over the 'dogs' array containing dog objects, and for each dog, calculate
+// the recommended food portion and add it to the object as a new property. Do
+// not create a new array, simply loop over the array. Forumla:
+// recommendedFood = weight ** 0.75 * 28. (The result is in grams of
+// food, and the weight needs to be in kg)
+// 2. Find Sarah's dog and log to the console whether it's eating too much or too
+// little. Hint: Some dogs have multiple owners, so you first need to find Sarah in
+// the owners array, and so this one is a bit tricky (on purpose) 🤓
+// 3. Create an array containing all owners of dogs who eat too much
+// ('ownersEatTooMuch') and an array with all owners of dogs who eat too little
+// ('ownersEatTooLittle').
+// 4. Log a string to the console for each array created in 3., like this: "Matilda and
+// Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's dogs eat
+// too little!"
+// 5. Log to the console whether there is any dog eating exactly the amount of food
+// that is recommended (just true or false)
+// 6. Log to the console whether there is any dog eating an okay amount of food
+// (just true or false)
+// 7. Create an array containing the dogs that are eating an okay amount of food (try
+// to reuse the condition used in 6.)
+// 8. Create a shallow copy of the 'dogs' array and sort it by recommended food
+// portion in an ascending order (keep in mind that the portions are inside the
+// array's objects 😉)
+// The Complete JavaScript Course
+// 25Hints:
+// §
+// Use many different tools to solve these challenges, you can use the summary
+// lecture to choose between them 😉
+// §
+// Being within a range 10% above and below the recommended portion means:
+// current > (recommended * 0.90) && current < (recommended *
+// 1.10). Basically, the current portion should be between 90% and 110% of the
+// recommended portion
+
+const dogs = [
+  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+  { weight: 8, curFood: 200, owners: ['Matilda'] },
+  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+  { weight: 32, curFood: 340, owners: ['Michael'] },
+];
+
+// recommendedFood = weight ** 0.75 * 28. (The result is in grams of
+// 1.
+dogs.forEach(dog => {
+  dog.recommendedFood = dog.weight ** 0.75 * 28;
+});
+
+console.log(dogs);
+
+// 2.
+const sarahDog = dogs.find(dog => dog.owners.includes('Sarah'));
+console.log(
+  sarahDog.curFood > sarahDog.recommendedFood
+    ? `Sarah's Dog Eating Too Much`
+    : `Sarah's Dog Eating Too Little`
+);
+
+// 3.
+
+const ownersEatTooMuch = dogs
+  .filter(dog => dog.curFood > dog.recommendedFood)
+  .flatMap(own => own.owners);
+console.log(ownersEatTooMuch);
+
+// 4.
+const ownersEatTooLittle = dogs
+  .filter(dog => dog.curFood < dog.recommendedFood)
+  .flatMap(own => own.owners);
+console.log(ownersEatTooLittle);
+
+console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much`);
+console.log(`${ownersEatTooLittle.join(' and ')}'s dogs eat too little`);
+
+// 5.
+const exactly = dogs.some(dog => dog.curFood === dog.recommendedFood);
+console.log(exactly);
+
+// 6.
+const okay = dog =>
+  dog.curFood > dog.recommendedFood * 0.9 &&
+  dog.curFood < dog.recommendedFood * 1.1;
+
+console.log(dogs.some(okay));
+
+console.log(dogs.filter(okay));
+
+const dogsSorted = dogs
+  .slice()
+  .sort((a, b) => a.recommendedFood - b.recommendedFood);
+
+console.log(dogsSorted);
+// console.log(eatingTooMuch);
+
+/** /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ */
+
+//                                 Challenge #Extra
+// create a 100 random dice using fill and create array programatically
+// const diceRoles = Array.from(
+//   { length: 100 },
+//   () => Math.trunc(Math.random() * 6) + 1
+// ); // Wow that so interesting. now I need to set this into a Set to see just the real values
+// console.log(diceRoles);
+// const notRedundent = new Set(diceRoles);
+// console.log(notRedundent);
+
+/** /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ */
+//  -------------------------                   PRACTICING ARRAYs                   -------------------------
+// #Advanced usage of reduce. calculate the total of overall deposit and withdrawal
+// const { deposit, withdrawl } = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce(
+//     (sums, curr) => {
+//       // curr > 0 ? (sums.deposit += curr) : (sums.withdrawl += curr);
+//       sums[curr > 0 ? 'deposit' : 'withdrawl'] += curr;
+//       return sums;
+//     },
+//     { deposit: 0, withdrawl: 0 }
+//   );
+// console.log(deposit, withdrawl);
+
+// // #Advanced usage of split(), map() ...etc
+// // this is a nice title -> This Is a Nice Title: Lets do function that titles all of that
+
+// const convertTitleCase = function (title) {
+//   const capitalize = str => str[0].toUpperCase() + str.slice(1);
+//   const exceptions = ['a', 'an', 'the', 'but', 'or', 'on', 'in', 'with'];
+
+//   const titleCase = title
+//     .toLowerCase()
+//     .split(' ')
+//     .map(word => (exceptions.includes(word) ? word : capitalize(word)))
+//     .join(' ');
+
+//   return capitalize(titleCase);
+// };
+
+// console.log(convertTitleCase('this IS a NiCe Title'));
+// console.log(convertTitleCase('thIs IS an own title but long one'));
+// console.log(convertTitleCase('a here is another title with EXAMPLE'));
+// console.log(convertTitleCase('the javascript an amazing on the learning way'));

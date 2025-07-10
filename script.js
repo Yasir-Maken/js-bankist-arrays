@@ -8,9 +8,22 @@
 
 const account1 = {
   owner: 'Jonas Schmedtmann',
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
+
+  movementsDates: [
+    '2019-11-18T21:31:17.178Z',
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2025-07-07T17:01:17.194Z',
+    '2025-07-07T23:36:17.929Z',
+    '2025-07-09T10:51:36.790Z',
+  ],
+  currency: 'EUR',
+  locale: 'pt-PT', // de-DE
 };
 
 const account2 = {
@@ -18,7 +31,34 @@ const account2 = {
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+
+  movementsDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2025-07-03T18:49:59.371Z',
+    '2025-07-09T12:01:20.894Z',
+  ],
+  currency: 'USD',
+  locale: 'en-US',
 };
+
+// const account1 = {
+//   owner: "Jonas Schmedtmann",
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
+
+// const account2 = {
+//   owner: "Jessica Davis",
+//   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+//   interestRate: 1.5,
+//   pin: 2222,
+// };
 
 const account3 = {
   owner: 'Steven Thomas Williams',
@@ -75,22 +115,67 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 ////////////////////////////////////////////////////////////////////
 //                          THE LOGIC
+
+//                    Functions
+
+// function that format the dates
+const formatMovementsDate = function (date, locale) {
+  // calculate how much days for the movement
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
+
+  const dayPassed = calcDaysPassed(new Date(), date);
+  // console.log(dayPassed);
+
+  if (dayPassed === 0) return 'Today';
+  if (dayPassed === 1) return 'Yesterday';
+  if (dayPassed <= 7) return `${dayPassed} days ago`;
+  else {
+    // const year = date.getFullYear();
+    // const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    // const day = `${date.getDate()}`.padStart(2, 0);
+    // const hours = date.getHours();
+    // const minute = date.getMinutes();
+
+    return new Intl.DateTimeFormat(locale).format(date);
+  }
+};
+
+// function that format the currences
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 // This funcion displays the all user movements
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = ''; // this empty the movement from elements that we have set to represent our desing
 
   // Sort our movemnets if the sort param is true
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal'; // check wether the movement is deposit or withdrawal according to the movement value
+
+    // Formatting the movements
+    const formatMov = formatCur(mov, acc.locale, acc.currency);
+
+    // displaying the movements Dates on the UI
+    const date = new Date(acc.movementsDates[i]);
+    const displayDate = formatMovementsDate(date, acc.locale);
     // the html that represent the movment on our ui, and insert it to its right place
+
     const html = ` 
         <div class="movements__row">
           <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-          <div class="movements__value">${mov} €</div>
+          <div class="movements__date">${displayDate}</div>
+          <div class="movements__value">${formatMov}</div>
         </div>
       `;
     containerMovements.insertAdjacentHTML('afterbegin', html); // the method that insert the above text to our html document as a node
@@ -102,7 +187,7 @@ const calcDisplayBalance = function (acc) {
   // now we use reduce() method to acumulate all the movements which results in the account balance
   acc.balance = acc.movements.reduce((acc, curr) => acc + curr, 0);
 
-  labelBalance.textContent = `${acc.balance} €`;
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 // Display the summary of incoming and outgoing and interest amounts and put them into their lables on the html document
@@ -112,14 +197,14 @@ const calcDisplaySummary = function (acc) {
     .filter(deposit => deposit > 0)
     .reduce((acc, deposit) => acc + deposit, 0);
 
-  labelSumIn.textContent = `${incomes} €`;
+  labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
 
   // We will chain methods to filter and calculate the amounts below 0 as out
   const out = acc.movements
     .filter(withdrawl => withdrawl < 0)
     .reduce((acc, withdrawl) => acc + Math.abs(withdrawl), 0);
 
-  labelSumOut.textContent = `${out} €`;
+  labelSumOut.textContent = formatCur(out, acc.locale, acc.currency);
 
   // The bank interest is payed to the bank in each deposit: lets set it 1.2 for our fictional bank here to calculate the interest
   // so we need to filter our array with above 0 which is deposit, then map them to caculate the interst to each depsit, the sum all of the calculated iterest
@@ -129,7 +214,7 @@ const calcDisplaySummary = function (acc) {
     .filter(interest => interest >= 1) // we add this to exclude every interest that bellow 1. as we set it a rule by our fictional bank hahahah
     .reduce((acc, interest) => acc + interest, 0);
 
-  labelSumInterest.textContent = `${interest} €`;
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
 };
 
 // Compute user name: taking the first letter of each word & combine them together in lower case
@@ -152,20 +237,87 @@ createUserNames(accounts);
 // console.log(accounts);
 
 // Use this to our to update the ui movements icome out balance whenever wherever we want
-const updateUI = function () {
+const updateUI = function (acc) {
   // Display Movementts
-  displayMovements(currentAccount.movements);
+  displayMovements(acc);
 
   // Display Balance
-  calcDisplayBalance(currentAccount);
+  calcDisplayBalance(acc);
 
   // Display Summary
-  calcDisplaySummary(currentAccount);
+  calcDisplaySummary(acc);
+};
+
+// timer to log out if spend specific time in the app
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+
+    // In each call print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = `Log in to get started`;
+    }
+
+    // Decreas is
+    time--;
+
+    // when 0 seconds, stop timer and log out
+  };
+
+  // Set Time to 5 minutes
+  let time = 120;
+  //
+  tick();
+  // Call the timer every second
+  const timer = setInterval(tick, 1000);
+  return timer;
 };
 
 // Event handler:
 // Perform Login Logic
-let currentAccount;
+let currentAccount, timer;
+
+// ---------------------------------------------------------
+
+//             FAKE LOGIN TO DEVELOPMENT PURPOSE
+/*
+currentAccount = account1;
+updateUI(account1);
+containerApp.style.opacity = 1;
+*/
+//
+
+// ---------------------------------------------------------
+
+//                EXPERMENTIND DATE API
+
+//
+/*
+const now = new Date();
+const options = {
+  hour: 'numeric',
+  minute: 'numeric',
+  day: 'numeric',
+  month: 'long', // numeric
+  year: '2-digit', // numeric
+  weekday: 'short', // (short, narrow)
+};
+
+// get the language from the user browser
+const locale = navigator.language;
+// console.log(locale);
+
+labelDate.textContent = new Intl.DateTimeFormat(locale, options).format(now);
+*/
+//
+
+// ----------------------------------------------------------
+
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault(); // this to prevent the page from reload when click on the submission button cause it is always reload the page
   // Shortly prevent Form from submiting
@@ -174,21 +326,57 @@ btnLogin.addEventListener('click', function (e) {
   );
   console.log(currentAccount);
   // If the user credintial was correct
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     // Display Welcome Message
     labelWelcome.textContent = `Welcome Back, ${
       currentAccount.owner.split(' ')[0]
     }`;
 
-    // show the user board
     containerApp.style.opacity = 1;
+
+    // Internationalization Date Do it by Intl API
+    const now = new Date();
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'long', // numeric
+      year: '2-digit', // numeric
+      weekday: 'short', // (short, narrow)
+    };
+
+    // get the language from the user browser
+    // const locale = navigator.language;
+    // console.log(locale);
+
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+
+    /*
+    // CUSTOME set the login date & time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    const day = `${now.getDate()}`.padStart(2, 0);
+    const hours = `${now.getHours()}`.padStart(2, 0);
+    const minute = `${now.getMinutes()}`.padStart(2, 0);
+
+    labelDate.textContent = `${year}/${month}/${day}, ${hours}: ${minute}`;
+*/
+    // show the user board
+
+    // start timer to log out if there is no interacivity with the page
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     // Clear input field
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur(); // take the focus from the intput of login
 
     // update the UI with the all our functions
-    updateUI();
+    updateUI(currentAccount);
 
     // Log the user the the console
     console.log(currentAccount.owner, 'LOGED IN');
@@ -200,7 +388,7 @@ btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
 
   // First we should check if the transfer input are valid
-  const amount = Number(inputTransferAmount.value); // amount to transfere
+  const amount = Math.floor(inputTransferAmount.value); // amount to transfere
   const recieverAccount = accounts.find(
     acc => acc.userName === inputTransferTo.value
   ); // person you want to transfere to
@@ -218,8 +406,16 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount); // add this movement by negative sign to the sender movements array
     recieverAccount.movements.push(amount); // add the amount to the recivere movements array
 
+    // Add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    recieverAccount.movementsDates.push(new Date().toISOString());
+
     // Then update the UI now to see the new things that happens
-    updateUI();
+    updateUI(currentAccount);
+
+    // Reset Timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -227,21 +423,33 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
   // our fictional bank set a rul to accept loan request the acount should have a deposit equal to or greater than 10% of the deposit amount
   if (amount > 0 && currentAccount.movements.some(mov => mov >= mov * 0.1)) {
     // And this is a good scenario for some() method. if this true Add Movement. and update the UI
 
-    // Add Movement
-    currentAccount.movements.push(amount);
+    // a time to accept the loan hahahah ficinal
+    setTimeout(function () {
+      // Add Movement
+      currentAccount.movements.push(amount);
 
-    // Update the UI
-    updateUI();
+      // Add Transfere date
+      currentAccount.movementsDates.push(new Date().toISOString());
+
+      // Update the UI
+      updateUI(currentAccount);
+    }, 2500);
 
     // Clear the Loan Input
     inputLoanAmount.value = '';
+
+    // Reset Timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
+
+// Log ou from the session
 
 // Perform Close Account Logic
 btnClose.addEventListener('click', function (e) {
@@ -250,7 +458,7 @@ btnClose.addEventListener('click', function (e) {
   // check if the user is exist. and the pin is correct to close and delete the accont
   if (
     inputCloseUsername.value === currentAccount.userName &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.userName === currentAccount.userName

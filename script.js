@@ -5,6 +5,7 @@
 // BANKIST APP
 
 // Data
+
 const account1 = {
   owner: 'Jonas Schmedtmann',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
@@ -761,63 +762,65 @@ btnSort.addEventListener('click', function (e) {
 // 1.10). Basically, the current portion should be between 90% and 110% of the
 // recommended portion
 
-const dogs = [
-  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
-  { weight: 8, curFood: 200, owners: ['Matilda'] },
-  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
-  { weight: 32, curFood: 340, owners: ['Michael'] },
-];
+// const dogs = [
+//   { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+//   { weight: 8, curFood: 200, owners: ['Matilda'] },
+//   { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+//   { weight: 32, curFood: 340, owners: ['Michael'] },
+// ];
 
-// recommendedFood = weight ** 0.75 * 28. (The result is in grams of
-// 1.
-dogs.forEach(dog => {
-  dog.recommendedFood = dog.weight ** 0.75 * 28;
-});
+// // recommendedFood = weight ** 0.75 * 28. (The result is in grams of
+// // 1.
+// dogs.forEach(dog => {
+//   dog.recommendedFood = dog.weight ** 0.75 * 28;
+// });
 
-console.log(dogs);
+// console.log(dogs);
 
-// 2.
-const sarahDog = dogs.find(dog => dog.owners.includes('Sarah'));
-console.log(
-  sarahDog.curFood > sarahDog.recommendedFood
-    ? `Sarah's Dog Eating Too Much`
-    : `Sarah's Dog Eating Too Little`
-);
+// // 2.
+// const sarahDog = dogs.find(dog => dog.owners.includes('Sarah'));
+// console.log(
+//   sarahDog.curFood > sarahDog.recommendedFood
+//     ? `Sarah's Dog Eating Too Much`
+//     : `Sarah's Dog Eating Too Little`
+// );
 
-// 3.
+// // 3.
 
-const ownersEatTooMuch = dogs
-  .filter(dog => dog.curFood > dog.recommendedFood)
-  .flatMap(own => own.owners);
-console.log(ownersEatTooMuch);
+// const ownersEatTooMuch = dogs
+//   .filter(dog => dog.curFood > dog.recommendedFood)
+//   .flatMap(own => own.owners);
+// console.log(ownersEatTooMuch);
 
-// 4.
-const ownersEatTooLittle = dogs
-  .filter(dog => dog.curFood < dog.recommendedFood)
-  .flatMap(own => own.owners);
-console.log(ownersEatTooLittle);
+// // 4.
+// const ownersEatTooLittle = dogs
+//   .filter(dog => dog.curFood < dog.recommendedFood)
+//   .flatMap(own => own.owners);
+// console.log(ownersEatTooLittle);
 
-console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much`);
-console.log(`${ownersEatTooLittle.join(' and ')}'s dogs eat too little`);
+// console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much`);
+// console.log(`${ownersEatTooLittle.join(' and ')}'s dogs eat too little`);
 
-// 5.
-const exactly = dogs.some(dog => dog.curFood === dog.recommendedFood);
-console.log(exactly);
+// // 5.
+// const exactly = dogs.some(dog => dog.curFood === dog.recommendedFood);
+// console.log(exactly);
 
-// 6.
-const okay = dog =>
-  dog.curFood > dog.recommendedFood * 0.9 &&
-  dog.curFood < dog.recommendedFood * 1.1;
+// // 6.
+// const okay = dog =>
+//   dog.curFood > dog.recommendedFood * 0.9 &&
+//   dog.curFood < dog.recommendedFood * 1.1;
 
-console.log(dogs.some(okay));
+// console.log(dogs.some(okay));
+// // 7.
+// console.log(dogs.filter(okay));
 
-console.log(dogs.filter(okay));
+// // 8.
+// const dogsSorted = dogs
+//   .slice()
+//   .sort((a, b) => a.recommendedFood - b.recommendedFood);
 
-const dogsSorted = dogs
-  .slice()
-  .sort((a, b) => a.recommendedFood - b.recommendedFood);
+// console.log(dogsSorted);
 
-console.log(dogsSorted);
 // console.log(eatingTooMuch);
 
 /** /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ */
